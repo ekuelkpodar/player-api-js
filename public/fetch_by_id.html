@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Fetch Player by ID</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Player API</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="fetch_all.html">Fetch All</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="fetch_by_id.html">Fetch by ID</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="mt-4">Fetch Player by ID</h1>
+        <form id="fetch-by-id-form">
+            <div class="form-group">
+                <label for="player-id">Player ID</label>
+                <input type="number" class="form-control" id="player-id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Fetch Player</button>
+        </form>
+        <div id="player-info" class="mt-4">
+            <!-- Player info will be displayed here -->
+        </div>
+    </div>
+    <script>
+        document.getElementById('fetch-by-id-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const playerId = document.getElementById('player-id').value;
+            fetch(`/api/players/${playerId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Player not found');
+                    }
+                    return response.json();
+                })
+                .then(player => {
+                    const playerInfoDiv = document.getElementById('player-info');
+                    playerInfoDiv.innerHTML = `
+                        <h3>Player Info</h3>
+                        <p>ID: ${player.id}</p>
+                        <p>First Name: ${player.first_name}</p>
+                        <p>Last Name: ${player.last_name}</p>
+                        <p>Team: ${player.team}</p>
+                        <p>Position: ${player.position}</p>
+                    `;
+                })
+                .catch(error => {
+                    const playerInfoDiv = document.getElementById('player-info');
+                    playerInfoDiv.innerHTML = `<p class="text-danger">${error.message}</p>`;
+                });
+        });
+    </script>
+</body>
+</html>
